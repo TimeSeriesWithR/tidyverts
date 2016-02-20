@@ -1,12 +1,13 @@
 #### Data preparation 
 <!------------------------------------------------------------------>
+```{r}
 library(dplyr)
 library(nycflights13)
 set.seed(123)
 data <- sample_n(flights, 3)
 
 glimpse(data)
-
+```
 ### Basic method of use select() 
 <!------------------------------------------------------------------>
 ```{r}
@@ -75,10 +76,11 @@ select_(data, '-ends_with("time")')
 ```
 ```{r}
 select_(data, .dots = c('starts_with("arr")', '-ends_with("time")'))
+```
 
 #### 2. Data preparation.
 To follow the dplyr vignette, flights data set in nycflights13 package were used as an example.
-```
+
 ```{r}
 library(dplyr)
 library(nycflights13)
@@ -106,11 +108,13 @@ $ air_time  (dbl) 88, 306, 103
 $ distance  (dbl) 488, 2475, 738
 $ hour      (dbl) 21, 6, 16
 $ minute    (dbl) 24, 51, 36
+```
+
 This data set includes the 16 columns shown above.
 
-###3. Basic method of use select().
-At first, the ways of using select() were shown.
-```
+###3. Basic method of use `select()`.
+At first, the ways of using `select()` were shown.
+
 ```{r}
 select(data, year)
   year
@@ -153,6 +157,8 @@ select(data, -(year:day))
 1     2124        -4     2322         1      UA  N801UA    289    EWR  DTW       88      488   21     24
 2      651        -9      936       -28      DL  N194DN    763    JFK  LAX      306     2475    6     51
 3     1636         1     1800         0      WN  N475WN   1501    LGA  MKE      103      738   16     36
+```
+```{r}
 It is also possible to pick columns by choosing the column number.
 
 select(data, 1, 2, 3)
@@ -161,10 +167,12 @@ select(data, 1:3)
 1 2013    12  15
 2 2013     7  17
 3 2013     3   2
+```
+
 Next topics are slightly advanced.
 
 It is possible to pick sequential columns temporarily and remove some of these.
-
+```{r}
 select(data, year:day, -month)
   year day
 1 2013  15
@@ -178,42 +186,48 @@ select(data, -(year:day), month)
 1     2124        -4     2322         1      UA  N801UA    289    EWR  DTW       88      488   21     24    12
 2      651        -9      936       -28      DL  N194DN    763    JFK  LAX      306     2475    6     51     7
 3     1636         1     1800         0      WN  N475WN   1501    LGA  MKE      103      738   16     36     3
-Even using a column number can give the same result with the column name. (The results are omitted.)
+
 ```
+Even using a column number can give the same result with the column name. (The results are omitted.)
 ```{r}
 select(data, 1:3, -2)
 select(data, -(1:3), 2)
-4. Utility functions of select().
-Utility functions existing in select(), summarise_each() and mutate_each() in dplyr as well as some functions in the tidyr package.
 ```
-```{r}
+#### 4. Utility functions of select().
+Utility functions existing in `select()`, `summarise_each()` and `mutate_each()` in dplyr as well as some functions in the tidyr package.
+
+
 Seven functions existed in the utility functions of select().
 
-starts_with(match, ignore.case = TRUE)
-ends_with(match, ignore.case = TRUE)
-contains(match, ignore.case = TRUE)
-matches(match, ignore.case = TRUE)
-num_range(prefix, range, width = NULL)
-one_of(...)
-everything()
+- starts_with(match, ignore.case = TRUE)
+- ends_with(match, ignore.case = TRUE)
+- contains(match, ignore.case = TRUE)
+- matches(match, ignore.case = TRUE)
+- num_range(prefix, range, width = NULL)
+- one_of(...)
+- everything()
+ 
+
 We now check the respective commands and how to use them.
 
 First, starts_with() picks columns whose name starts with the specified string.
-
+```{r}
 select(data, starts_with("arr"))
   arr_time arr_delay
 1     2322         1
 2      936       -28
 3     1800         0
+```
 The argument ignore.case specifies whether the lowercase is classified as a capital letter(default is TRUE).
 
 The ends_with() picks columns whose name ends with the specified string .
-
+```{r}
 select(data, ends_with("time"))
   dep_time arr_time air_time
 1     2124     2322       88
 2      651      936      306
 3     1636     1800      103
+```
 The contains() picks columns whose name contains the specified string.
 
 select(data, contains("_"))
@@ -221,6 +235,7 @@ select(data, contains("_"))
 1     2124        -4     2322         1       88
 2      651        -9      936       -28      306
 3     1636         1     1800         0      103
+```
 The matches() picks columns based on a regular expression matching string.
 
 select(data, contains("_"))
@@ -284,37 +299,44 @@ select(data, -starts_with("arr"))
 1 2013    12  15     2124        -4      UA  N801UA    289    EWR  DTW       88      488   21     24
 2 2013     7  17      651        -9      DL  N194DN    763    JFK  LAX      306     2475    6     51
 3 2013     3   2     1636         1      WN  N475WN   1501    LGA  MKE      103      738   16     36
-
+```
 #### 5. Standard evaluation.
-Thus far, we explained the normal select() function; however, the normal select() function cannot handle character strings as arguments. 
+Thus far, we explained the normal `select()` function; however, the normal `select()` function cannot handle character strings as arguments. 
 This might become a problem when column names are given as a string vector for example. 
-To solve this problem, the select_() function was equipped in dplyr. (Caution: An underscore was added in the function name.) 
-The use of the select_() function is the same as the select() except specifying columns by string; however, attention is needed when specifying a column name by a vector.
+To solve this problem, the `select_()` function was equipped in dplyr. (Caution: An underscore was added in the function name.) 
+The use of the `select_()` function is the same as the `select()` except specifying columns by string; however, attention is needed when specifying a column name by a vector.
 
+```{r}
 select_(data, "year", "month", "day")
   year month day
 1 2013    12  15
 2 2013     7  17
 3 2013     3   2
+```
 When specifying column names by a vector, the vector should be given the .dot argument.
-
+```{r}
 col_vector <- c("year", "month", "day")
 select_(data, .dots = col_vector)
   year month day
 1 2013    12  15
 2 2013     7  17
 3 2013     3   2
+```
 All arguments that can use the select() function are also possible candidates for the select_() function.
-
+```{r}
 select_(data, 'year:day')
 select_(data, 'year:day', '-month')
 select_(data, '-(year:day)')
 select_(data, 'starts_with("arr")')
 select_(data, '-ends_with("time")')
-Furthermore, also in this case, the argument vector should be given the .dot argument in the select_() function.
+```
 
+Furthermore, also in this case, the argument vector should be given the .dot argument in the select_() function.
+```{r}
 select_(data, .dots = c('starts_with("arr")', '-ends_with("time")'))
-6. References.
+```
+
+#### 6. References.
 Introduction to dplyr 
 https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html
 
