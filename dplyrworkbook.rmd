@@ -1,4 +1,5 @@
-#### Data preparation ------------------------------------------------------------------
+#### Data preparation 
+<!------------------------------------------------------------------>
 library(dplyr)
 library(nycflights13)
 set.seed(123)
@@ -6,71 +7,87 @@ data <- sample_n(flights, 3)
 
 glimpse(data)
 
-# Basic method of use select() ----------------------------------------------------------------------
+### Basic method of use select() 
+<!------------------------------------------------------------------>
+```{r}
 select(data, year)
 select(data, year, month, day)
 select(data, year:day)
 
 select(data, -year, -month, -day)
 select(data, -(year:day))
-
+```
+```{r}
 select(data, 1, 2, 3)
 select(data, 1:3)
 
 select(data, -1, -2, -3)
 select(data, -(1:3))
-
+```
+```{r}
 select(data, year:day, -month)
 select(data, -(year:day), month)
 select(data, 1:3, -2)
 select(data, -(1:3), 2)
-
-# Utility functions of select() --------------------------------------------------------------
+```
+```{r}
+# Utility functions of select()
 select(data, starts_with("arr"))
 select(data, ends_with("time"))
 select(data, contains("_"))
 select(data, matches("^(dep|arr)_"))
-
+```
+```{r}
 data2 <- data
 colnames(data2) <- sprintf("x%d", 1:16)
 select(data2, num_range("x", 8:11))
 select(data2, num_range("x", c(9, 11)))
-
+```
+```{r}
 data3 <- data
 colnames(data3) <- sprintf("x%02d", 1:16)
 select(data3, num_range("x", 8:11, width=2))
-
+```
+```{r}
 col_vector <- c("year", "month", "day")
 select(data, col_vector)
 select(data, one_of(col_vector))
-
+```
+```{r}
 select(data, everything())
 
 select(data, -starts_with("arr"))
-
-# Standard evaluation --------------------------------------------------------------------
+```
+```{r}
+# Standard evaluation
 select_(data, "year", "month", "day")
-
+```
+```{r}
 col_vector <- c("year", "month", "day")
 select_(data, .dots = col_vector)
-
+```
+```{r}
 select_(data, 'year:day')
 select_(data, 'year:day', '-month')
 select_(data, '-(year:day)')
 select_(data, 'starts_with("arr")')
 select_(data, '-ends_with("time")')
-
+```
+```{r}
 select_(data, .dots = c('starts_with("arr")', '-ends_with("time")'))
 
 #### 2. Data preparation.
 To follow the dplyr vignette, flights data set in nycflights13 package were used as an example.
-
+```
+```{r}
 library(dplyr)
 library(nycflights13)
-
+```
+```{r}
 set.seed(123)
 data <- sample_n(flights, 3)
-
+```
+```{r}
 glimpse(data)
 Variables:
 $ year      (int) 2013, 2013, 2013
@@ -91,22 +108,29 @@ $ hour      (dbl) 21, 6, 16
 $ minute    (dbl) 24, 51, 36
 This data set includes the 16 columns shown above.
 
-3. Basic method of use select().
+###3. Basic method of use select().
 At first, the ways of using select() were shown.
-
+```
+```{r}
 select(data, year)
   year
 1 2013
 2 2013
 3 2013
+```
 This process shows the way to take the year column out of data. To pick multiple columns, you can write the following.
+```{r}
+
 
 select(data, year, month, day)
   year month day
 1 2013    12  15
 2 2013     7  17
 3 2013     3   2
+
+```
 If columns were sequential in the dataset, you could write the following to pick sequential columns.
+```{r}
 
 select(data, year:day)
   year month day
@@ -114,14 +138,16 @@ select(data, year:day)
 2 2013     7  17
 3 2013     3   2
 If you want to remove a specific column, add - in the head of the column name as follows.
-
+```
+```{r}
 select(data, -year, -month, -day)
   dep_time dep_delay arr_time arr_delay carrier tailnum flight origin dest air_time distance hour minute
 1     2124        -4     2322         1      UA  N801UA    289    EWR  DTW       88      488   21     24
 2      651        -9      936       -28      DL  N194DN    763    JFK  LAX      306     2475    6     51
 3     1636         1     1800         0      WN  N475WN   1501    LGA  MKE      103      738   16     36
 To remove sequential columns, put sequential columns in brackets () connected with a colon.
-
+```
+```{r}
 select(data, -(year:day))
   dep_time dep_delay arr_time arr_delay carrier tailnum flight origin dest air_time distance hour minute
 1     2124        -4     2322         1      UA  N801UA    289    EWR  DTW       88      488   21     24
@@ -145,19 +171,22 @@ select(data, year:day, -month)
 2 2013  17
 3 2013   2
 It is also possible to remove sequential columns and keep a part of these.
-
+```
+```{r}
 select(data, -(year:day), month)
   dep_time dep_delay arr_time arr_delay carrier tailnum flight origin dest air_time distance hour minute month
 1     2124        -4     2322         1      UA  N801UA    289    EWR  DTW       88      488   21     24    12
 2      651        -9      936       -28      DL  N194DN    763    JFK  LAX      306     2475    6     51     7
 3     1636         1     1800         0      WN  N475WN   1501    LGA  MKE      103      738   16     36     3
 Even using a column number can give the same result with the column name. (The results are omitted.)
-
+```
+```{r}
 select(data, 1:3, -2)
 select(data, -(1:3), 2)
 4. Utility functions of select().
 Utility functions existing in select(), summarise_each() and mutate_each() in dplyr as well as some functions in the tidyr package.
-
+```
+```{r}
 Seven functions existed in the utility functions of select().
 
 starts_with(match, ignore.case = TRUE)
