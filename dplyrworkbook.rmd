@@ -1,4 +1,45 @@
 
+####Part A. Data preparation 
+
+<!------------------------------------------------------------------>
+
+1. First we load the two packages that we are going to use: *dplyr* and *nycflights13*. 
+There will be a warning message that we can ignore.
+```{r}
+library(dplyr)
+library(nycflights13)
+```
+
+2. We will use the ***flights*** data set on *nycflights13*. 
+To find out the number of rows (cases) and columns (variables) we can use the `dim()` command. 
+The `summary()` command will give us a summary of the data.
+
+
+```{r}
+dim(flights)
+
+summary(flights)
+
+glimpse(flights)
+```
+
+
+3. For ease of use, lets just work with 5 cases. 
+We can use the `select_n()` command to select 5 cases from the data set.
+
+
+```{r}
+set.seed(123)
+
+data <- sample_n(flights, 5)
+```
+
+#### Basic method of use select() 
+
+<!------------------------------------------------------------------>
+
+4. Here we can select a set of variables by name
+
 
 #### Part D Data preparation.
 To follow the dplyr vignette, flights data set in nycflights13 package were used as an example.
