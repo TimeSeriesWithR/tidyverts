@@ -250,7 +250,7 @@ Error: All select() inputs must resolve to integer column positions.
 The following do not:
 *  col_vector
 ```
-However, an intended process occurs in the case of one_of().
+However, an intended process occurs in the case of `one_of()`.
 ```{r}
 select(data, one_of(col_vector))
   year month day
@@ -258,7 +258,7 @@ select(data, one_of(col_vector))
 2 2013     7  17
 3 2013     3   2
 ```
-The everything() selects all columns. (Result was omitted.)
+The `everything()` selects all columns. (Result was omitted.)
 
 ```{r}
 select(data, everything())
