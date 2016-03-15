@@ -14,7 +14,7 @@
 \includegraphics[width=0.60\linewidth]{dplyr-hexbin-logo}
 \end{figure}
 \Large
-\[ \mbox{Coding Grace 2016 - dplyr}\]
+\[ \mbox{Coding Grace 2016 - dplyr and magrittr}\]
 \end{frame}		
 	%===============================================%
 	\begin{frame}
@@ -95,7 +95,7 @@
 	\begin{frame}
 		
 		\frametitle{Working with dplyr} 
-		\large
+		\Large
 		\textbf{dplyr} focussed on tools for working with data frames (hence the \textbf{d} in the name). 
 		\textbf{dplyr} has three main goals:
 		
@@ -199,27 +199,27 @@
 	\end{frame}
 	
 	%=================================================%
-	\begin{frame}
-		\begin{figure}
-			\centering
-			\includegraphics[width=0.99\linewidth]{images/pipe}
-			
-		\end{figure}
-		\begin{center}
-			{\huge THE $ \%>\% $ OPERATOR}
-		\end{center}
-		
-		
-		
-	\end{frame}
-	
+%	\begin{frame}
+%		\begin{figure}
+%			\centering
+%			\includegraphics[width=0.99\linewidth]{images/pipe}
+%			
+%		\end{figure}
+%	
+%		
+%	\end{frame}
+%	
 	\begin{frame}
 		\begin{figure}
 			\centering
 			\includegraphics[width=0.99\linewidth]{images/pipe2}
 			
 		\end{figure}
-		
+			\begin{center}
+				{\huge THE $ \%>\% $ OPERATOR}
+			\end{center}
+			
+			
 	\end{frame}
 	%=================================================%
 	\begin{frame}[fragile]
@@ -303,69 +303,71 @@
 %================================================================= %
 \begin{frame}
 	\frametitle{magrittr :  the $\%>\%$ operator}
+	\large
 	\begin{itemize}
 		\item You can use the $\%>\%$ operator with any \texttt{R} functions.
 		\item The rules are simple: the object on the left hand side is passed as the first argument to the function on the right hand side. So: 
 	\end{itemize}
 	\begin{framed}	
 		my.data $\%>\%$ \texttt{my.function} is the same as \texttt{my.function(my.data)}
+		
 		my.data $\%>\%$ \texttt{my.function(arg=value)} is the same as \texttt{my.function(my.data, arg=value)}
 	\end{framed}
 	
 \end{frame}
+%%=================================================%
+%\begin{frame}[fragile]
+%	\frametitle{The $ \%>\% $ Operator}
+%	\Large
+%	\textbf{The $ \%>\% $ Operator}
+%	\begin{itemize}
+%		\item ggvis makes use of the $ \%>\% $ operator from the
+%		package magrittr
+%		\item This allows us to layer up graphics in the same
+%		way we would with ggplot2
+%		
+%	\end{itemize}
+%	
+%	
+%\end{frame}
 %=================================================%
-\begin{frame}[fragile]
-	\frametitle{The $ \%>\% $ Operator}
-	\Large
-	\textbf{The $ \%>\% $ Operator}
-	\begin{itemize}
-		\item ggvis makes use of the $ \%>\% $ operator from the
-		package magrittr
-		\item This allows us to layer up graphics in the same
-		way we would with ggplot2
-		
-	\end{itemize}
-	
-	
-\end{frame}
-%=================================================%
-\begin{frame}[fragile]
-	\frametitle{The $ \%>\% $ Operator}
-	\textbf{Tube Data Example }\\ (\textit{Dr. Aimee Gott, Mango Solutions})
-	%		\begin{itemize}
-	%			\item The $ \%>\% $ operator passes the left hand object to the
-	%			first argument of the right hand expression
-	%			\item We can pass data or objects to functions in this way
-	%			
-	%		\end{itemize}
-	
-	\begin{framed}
-		\begin{verbatim}
-		> tubeData$Excess %>%  tapply(tubeData$Line, mean)
-		
-		# Bakerloo              5.047714
-		# Central               5.998667
-		# Circle & HamDistrict  7.166095 
-		
-		\end{verbatim}
-	\end{framed}
-	
-\end{frame}
-%================================================================= %
-\begin{frame}
-	\frametitle{magrittr :  the $\%>\%$ operator}
-	\Large
-	\vspace{-1cm}
-	\textbf{	$ \%>\% $ in ggvis}
-	\begin{itemize}
-		\item With ggvis we pass "\texttt{ggvis}" objects
-		\item We create the initial object by passing data to
-		\texttt{ggvis()}
-		\item All other functions expect a ggvis object as the
-		first argument and return a ggvis object
-	\end{itemize}
-	
-\end{frame}
+%\begin{frame}[fragile]
+%	\frametitle{The $ \%>\% $ Operator}
+%	\textbf{Tube Data Example }\\ (\textit{Dr. Aimee Gott, Mango Solutions})
+%	%		\begin{itemize}
+%	%			\item The $ \%>\% $ operator passes the left hand object to the
+%	%			first argument of the right hand expression
+%	%			\item We can pass data or objects to functions in this way
+%	%			
+%	%		\end{itemize}
+%	
+%	\begin{framed}
+%		\begin{verbatim}
+%		> tubeData$Excess %>%  tapply(tubeData$Line, mean)
+%		
+%		# Bakerloo              5.047714
+%		# Central               5.998667
+%		# Circle & HamDistrict  7.166095 
+%		
+%		\end{verbatim}
+%	\end{framed}
+%	
+%\end{frame}
+%%================================================================= %
+%\begin{frame}
+%	\frametitle{magrittr :  the $\%>\%$ operator}
+%	\Large
+%	\vspace{-1cm}
+%	\textbf{	$ \%>\% $ in ggvis}
+%	\begin{itemize}
+%		\item With ggvis we pass "\texttt{ggvis}" objects
+%		\item We create the initial object by passing data to
+%		\texttt{ggvis()}
+%		\item All other functions expect a ggvis object as the
+%		first argument and return a ggvis object
+%	\end{itemize}
+%	
+%\end{frame}
 
 %============================================================================= %
 	%=======================================================================================%
