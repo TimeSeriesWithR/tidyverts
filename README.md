@@ -1,2 +1,5 @@
-# B-dplyr
-Introduction to dplyr
+# tidyverts
+
+Tidy R packages for time series analysis
+
+* tsibble
