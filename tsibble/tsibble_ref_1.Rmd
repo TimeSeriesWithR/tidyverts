@@ -1,0 +1,57 @@
+---
+title: "Tsibble"
+author: "Kevin O'Brien"
+date: "24 September 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tsibble)
+```
+
+## build_tsibble Low-level construction of a tsibble object
+Description • build_tsibble() creates a tbl_ts object with more controls. It is useful for creating a tbl_ts internallyinsideafunction,anditallowsuserstodetermineifthetimeneedsordering and the interval needs calculating. • build_tsibble_meta() assigns the attributes to an object, assuming this object is a valid tsibble.
+
+#### Usage 
+<pre><code>
+build_tsibble(x, key, index, index2, groups = id(), regular = TRUE, 
+ validate = TRUE, ordered = NULL, interval = NULL)
+build_tsibble_meta(x, key, index, index2, groups = id(), regular = TRUE, ordered = NULL, interval = NULL)
+</code></pre>
+
+#### Arguments 
+* x A data.frame, tbl_df, tbl_ts, or other tabular objects. 
+* key Structural variable(s) that deﬁne unique time indices, used with the helper id. If a univariate time series (without an explicit key), simply call id(). See below for details. index A bare (or unquoted) variable to specify the time index variable. index2 A candidate of index to update the index to a new one when index_by. By default, it’s identical to index. 
+* groups Grouping variable(s) when group_by.tbl_ts. regular Regular time interval (TRUE) or irregular (FALSE). The interval is determined by the greatest common divisor of positive time distances, if TRUE. 
+validate TRUE suggests to verify that each key or each combination of key variables lead touniquetimeindices(i.e. a valid tsibble). Itwillalsomakesurethatthenested variables are arranged from lower level to higher, if nested variables are passed to key. 
+ - If you are sure that it’s a valid input, specify FALSE to skip the checks. ordered ThedefaultofNULLarrangesthekeyvariable(s)ﬁrstandthenindexfrompastto future. TRUE suggests to skip the ordering as x in the correct order. 
+ - FALSE also skips the ordering but gives a warning instead. 
+  -interval NULL computes the interval. Use the speciﬁed interval via new_interval() as is, if an class of interval is supplied.
+
+#### Examples
+```{r}
+# Prepare `pedestrian` to use a new index `Date` ---
+pedestrian %>% build_tsibble( key = key(.), index = !! index(.), index2 = Date, 
+interval = interval(.) )
+```
+
+## case_na A thin wrapper of dplyr::case_when() if there are NAs
+
+#### Description 
+A thin wrapper of ``dplyr::case_when()`` if there are NAs
+
+#### Usage
+case_na(formula)
+
+#### Arguments 
+* ``formula``: A two-sided formula. The LHS expects a vector containing NA, and the RHS gives the replacement value.
+
+#### Examples
+```{r}
+x <- rnorm(10) 
+x[c(3, 7)] <- NA_real_ 
+case_na(x ~ 10) 
+case_na(x ~ mean(x, na.rm = TRUE))
+```

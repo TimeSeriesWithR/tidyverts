@@ -1,0 +1,87 @@
+---
+title: "Tsibble"
+author: "Kevin O'Brien"
+date: "24 September 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tsibble)
+```
+## ``units_since`` Time units since Unix Epoch
+
+#### Description 
+Time units since Unix Epoch
+
+#### Usage
+units_since(x)
+Arguments x An object of POSIXct, Date, yearweek, yearmonth, yearquarter.
+Details origin: • POSIXct: 1970-01-01 00:00:00 • Date: 1970-01-01 • yearweek: 1970 W01 (i.e. 1969-12-29) • yearmonth: 1970 Jan • yearquarter: 1970 Qtr1
+
+#### Examples
+```{r}
+units_since(x = yearmonth(2012 + (0:11) / 12))
+```
+
+## yearweek Represent year-week (ISO), year-month or year-quarter objects
+
+#### Description 
+Create or coerce using ``yearweek()``, ``yearmonth()``, or ``yearquarter()``
+
+#### Usage
+<pre><code>
+yearweek(x)
+is_53weeks(year)
+yearmonth(x)
+yearquarter(x)
+</code></pre>
+
+#### Arguments 
+* x Other object. 
+* year A vector of years.
+
+#### Details 
+It’s a known issue that these attributes will be dropped when using group_by and mutate together. 
+It is recommended to ungroup ﬁrst, and then use mutate.
+
+#### Value 
+* Year-week (yearweek), year-month (yearmonth) or year-quarter (yearquarter) objects. 
+* TRUE/FALSE if the year has 53 ISO weeks.
+
+#### Index functions 
+The tsibble ``yearmonth()`` and ``yearquarter()`` function preserve the time zone of the input x, contrasting to their zoo counterparts.
+
+Examples
+```{r}
+# coerce POSIXct/Dates to yearweek, yearmonth, yearquarter ---
+x <- seq(as.Date("2016-01-01"), as.Date("2016-12-31"), by = "1 month") 
+yearweek(x) 
+yearmonth(yearweek(x)); 
+yearmonth(x)  
+yearmonth("201807") 
+yearquarter(x)
+```
+```{r}
+# coerce numerics to yearmonth, yearquarter ---
+yearmonth(seq(2010, 2017, by = 1 / 12)) 
+yearquarter(seq(2010, 2017, by = 1 / 4))
+```
+```{r}
+# coerce yearmonths to yearquarter ---
+y <- yearmonth(x) 
+yearquarter(y)
+```
+```{r}
+# S3 method seq() ---
+wk1 <- yearweek(as.Date("2017-11-01")) 
+wk2 <- yearweek(as.Date("2018-04-29")) 
+```
+```{r}
+seq(from = wk1, to = wk2, by = 2) # by two weeks 
+mth <- yearmonth(as.Date("2017-11-01")) 
+seq(mth, length.out = 5, by = 1) # by 1 month 
+seq(yearquarter(mth), length.out = 5, by = 1) # by 1 quarter 
+is_53weeks(2015:2016)
+```

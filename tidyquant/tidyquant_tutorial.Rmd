@@ -1,0 +1,21 @@
+tidyquant package
+================
+The tidyquant package is focused on retrieving, manipulating, and scaling financial data analysis in the easiest way possible. 
+To get the tidyquant package and start working with it, you first have to install it.
+install.packages("tidyquant")
+This places it on your local computer. You then have to load it into your current R session. 
+This gives you access to all of the functions in the package.
+library(tidyquant)
+These steps of installing and librarying packages are necessary for any CRAN package you want to use.
+The exercise code is already written for you. You will explore some of the functions that tidyquant has for financial analysis.
+
+
+The code is already written, but these instructions will walk you through the steps.
+First, library the package to access its functions.
+Use the tidyquant function, tq_get() to get the stock price data for Apple.
+Take a look at the data frame it returned.
+Plot the stock price over time.
+Calculate daily returns for the adjusted stock price using tq_mutate(). This function "mutates" your data frame by 
+adding a new column onto it. Here, that new column is the daily returns.
+Sort the returns.
+Plot the sorted returns. You can see that Apple had a few days of losses >10%, and a number of days with gains of >5%.

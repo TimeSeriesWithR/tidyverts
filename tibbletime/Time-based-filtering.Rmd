@@ -1,0 +1,314 @@
+Time-based filtering
+Davis Vaughan
+2018-01-30
+Introducing filter_time()
+Datasets required
+Year filtering example
+Month filtering example
+Keywords
+Grouped example
+Finer periods
+[ syntax
+Using variables in the filter
+Introducing filter_time()
+filter_time() attempts to make filtering data frames by date much easier than dplyr::filter(). It includes a flexible shorthand notation that allows you to specify entire date ranges with very little typing. The general form of the time_formula that you will use to filter rows is from ~ to, where the left hand side (LHS) is the character start date, and the right hand side (RHS) is the character end date. Both endpoints are included in the result. Each side of the time_formula can be maximally specified as the character 'YYYY-MM-DD HH:MM:SS'.
+Datasets required
+
+```{r}
+library(tibbletime)
+library(dplyr)
+
+# Facebook stock prices.
+data(FB)
+
+# Convert FB to tbl_time
+FB <- as_tbl_time(FB, index = date)
+
+# FANG stock prices
+data(FANG)
+
+# Convert FANG to tbl_time and group
+FANG <- as_tbl_time(FANG, index = date) %>%
+  group_by(symbol)
+
+```
+### Year filtering example
+In dplyr, if you wanted to get the dates for 2013 in the FB dataset, you might do something like this:
+```{r}
+filter(FB, date >= as.Date("2013-01-01"), date <= as.Date("2013-12-31"))
+## # A time tibble: 252 x 8
+## # Index: date
+##    symbol date        open  high   low close    volume adjusted
+##    <chr>  <date>     <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>
+##  1 FB     2013-01-02  27.4  28.2  27.4  28.0  69846400     28.0
+##  2 FB     2013-01-03  27.9  28.5  27.6  27.8  63140600     27.8
+##  3 FB     2013-01-04  28.0  28.9  27.8  28.8  72715400     28.8
+##  4 FB     2013-01-07  28.7  29.8  28.6  29.4  83781800     29.4
+##  5 FB     2013-01-08  29.5  29.6  28.9  29.1  45871300     29.1
+##  6 FB     2013-01-09  29.7  30.6  29.5  30.6 104787700     30.6
+##  7 FB     2013-01-10  30.6  31.5  30.3  31.3  95316400     31.3
+##  8 FB     2013-01-11  31.3  32.0  31.1  31.7  89598000     31.7
+##  9 FB     2013-01-14  32.1  32.2  30.6  31.0  98892800     31.0
+## 10 FB     2013-01-15  30.6  31.7  29.9  30.1 173242600     30.1
+## # ... with 242 more rows
+```
+That’s a lot of typing for one filter step. With tibbletime, because the index was specified at creation, we can do this:
+```{r}
+filter_time(FB, time_formula = '2013-01-01' ~ '2013-12-31')
+## # A time tibble: 252 x 8
+## # Index: date
+##    symbol date        open  high   low close    volume adjusted
+##    <chr>  <date>     <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>
+##  1 FB     2013-01-02  27.4  28.2  27.4  28.0  69846400     28.0
+##  2 FB     2013-01-03  27.9  28.5  27.6  27.8  63140600     27.8
+##  3 FB     2013-01-04  28.0  28.9  27.8  28.8  72715400     28.8
+##  4 FB     2013-01-07  28.7  29.8  28.6  29.4  83781800     29.4
+##  5 FB     2013-01-08  29.5  29.6  28.9  29.1  45871300     29.1
+##  6 FB     2013-01-09  29.7  30.6  29.5  30.6 104787700     30.6
+##  7 FB     2013-01-10  30.6  31.5  30.3  31.3  95316400     31.3
+##  8 FB     2013-01-11  31.3  32.0  31.1  31.7  89598000     31.7
+##  9 FB     2013-01-14  32.1  32.2  30.6  31.0  98892800     31.0
+## 10 FB     2013-01-15  30.6  31.7  29.9  30.1 173242600     30.1
+## # ... with 242 more rows
+```
+At first glance, this might not look like less code, but this is before any shorthand is applied. Note how the filtering condition is specified as a formula separated by a ~.
+Using filter_time shorthand, this can be written:
+```{r}
+filter_time(FB, '2013' ~ '2013')
+## # A time tibble: 252 x 8
+## # Index: date
+##    symbol date        open  high   low close    volume adjusted
+##    <chr>  <date>     <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>
+##  1 FB     2013-01-02  27.4  28.2  27.4  28.0  69846400     28.0
+##  2 FB     2013-01-03  27.9  28.5  27.6  27.8  63140600     27.8
+##  3 FB     2013-01-04  28.0  28.9  27.8  28.8  72715400     28.8
+##  4 FB     2013-01-07  28.7  29.8  28.6  29.4  83781800     29.4
+##  5 FB     2013-01-08  29.5  29.6  28.9  29.1  45871300     29.1
+##  6 FB     2013-01-09  29.7  30.6  29.5  30.6 104787700     30.6
+##  7 FB     2013-01-10  30.6  31.5  30.3  31.3  95316400     31.3
+##  8 FB     2013-01-11  31.3  32.0  31.1  31.7  89598000     31.7
+##  9 FB     2013-01-14  32.1  32.2  30.6  31.0  98892800     31.0
+## 10 FB     2013-01-15  30.6  31.7  29.9  30.1 173242600     30.1
+## # ... with 242 more rows
+```
+Or even more succinctly as:
+```{r}
+filter_time(FB, ~'2013')
+## # A time tibble: 252 x 8
+## # Index: date
+##    symbol date        open  high   low close    volume adjusted
+##    <chr>  <date>     <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>
+##  1 FB     2013-01-02  27.4  28.2  27.4  28.0  69846400     28.0
+##  2 FB     2013-01-03  27.9  28.5  27.6  27.8  63140600     27.8
+##  3 FB     2013-01-04  28.0  28.9  27.8  28.8  72715400     28.8
+##  4 FB     2013-01-07  28.7  29.8  28.6  29.4  83781800     29.4
+##  5 FB     2013-01-08  29.5  29.6  28.9  29.1  45871300     29.1
+##  6 FB     2013-01-09  29.7  30.6  29.5  30.6 104787700     30.6
+##  7 FB     2013-01-10  30.6  31.5  30.3  31.3  95316400     31.3
+##  8 FB     2013-01-11  31.3  32.0  31.1  31.7  89598000     31.7
+##  9 FB     2013-01-14  32.1  32.2  30.6  31.0  98892800     31.0
+## 10 FB     2013-01-15  30.6  31.7  29.9  30.1 173242600     30.1
+## # ... with 242 more rows
+```
+The shorthand notation works as follows. In the first example, '2013' ~ '2013' is expanded to '2013-01-01 + 00:00:00' ~ '2013-12-31 + 23:59:59'. It works by identifying the periodicity of the provided input (yearly), and expanding it to the beginning and end of that period. The one sided formula ~'2013' works similarly, and is useful when you want to select every date inside a period.
+
+#### Month filtering example
+As another example of this shorthand, if you wanted to select every date in March, 2015:
+```{r}
+filter_time(FB, ~'2015-03')
+## # A time tibble: 22 x 8
+## # Index: date
+##    symbol date        open  high   low close   volume adjusted
+##    <chr>  <date>     <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
+##  1 FB     2015-03-02  79.0  79.9  78.5  79.8 21662500     79.8
+##  2 FB     2015-03-03  79.6  79.7  78.5  79.6 18635000     79.6
+##  3 FB     2015-03-04  79.3  81.2  78.8  80.9 28126700     80.9
+##  4 FB     2015-03-05  81.2  82.0  81.1  81.2 27825700     81.2
+##  5 FB     2015-03-06  80.9  81.3  79.8  80.0 24488600     80.0
+##  6 FB     2015-03-09  79.7  79.9  78.6  79.4 18925100     79.4
+##  7 FB     2015-03-10  78.5  79.3  77.6  77.6 23067100     77.6
+##  8 FB     2015-03-11  77.8  78.4  77.3  77.6 20215700     77.6
+##  9 FB     2015-03-12  78.1  79.1  77.9  78.9 16093300     78.9
+## 10 FB     2015-03-13  78.6  79.4  77.7  78.1 18557300     78.1
+## # ... with 12 more rows
+# In dplyr it looks like this
+# (and you have to think, does March have 30 or 31 days?)
+# filter(FB, date >= as.Date("2015-03-01"), date <= as.Date("2015-03-31"))
+```
+
+### Keywords
+Two keywords are available to assist with filtering:
+* 'start' - The start of the series
+* 'end' - The end of the series
+This filters from the start of the series to the end of 2015.
+```{r}
+filter_time(FB, 'start' ~ '2015')
+## # A time tibble: 756 x 8
+## # Index: date
+##    symbol date        open  high   low close    volume adjusted
+##    <chr>  <date>     <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>
+##  1 FB     2013-01-02  27.4  28.2  27.4  28.0  69846400     28.0
+##  2 FB     2013-01-03  27.9  28.5  27.6  27.8  63140600     27.8
+##  3 FB     2013-01-04  28.0  28.9  27.8  28.8  72715400     28.8
+##  4 FB     2013-01-07  28.7  29.8  28.6  29.4  83781800     29.4
+##  5 FB     2013-01-08  29.5  29.6  28.9  29.1  45871300     29.1
+##  6 FB     2013-01-09  29.7  30.6  29.5  30.6 104787700     30.6
+##  7 FB     2013-01-10  30.6  31.5  30.3  31.3  95316400     31.3
+##  8 FB     2013-01-11  31.3  32.0  31.1  31.7  89598000     31.7
+##  9 FB     2013-01-14  32.1  32.2  30.6  31.0  98892800     31.0
+## 10 FB     2013-01-15  30.6  31.7  29.9  30.1 173242600     30.1
+## # ... with 746 more rows
+```
+
+### Grouped example
+Working with grouped tbl_time objects is just as you might expect.
+```{r}
+FANG %>%
+  filter_time('2013-01-01' ~ '2013-01-04')
+## # A time tibble: 12 x 8
+## # Index:  date
+## # Groups: symbol [4]
+##    symbol date        open  high   low close   volume adjusted
+##    <chr>  <date>     <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
+##  1 FB     2013-01-02  27.4  28.2  27.4  28.0 69846400     28.0
+##  2 FB     2013-01-03  27.9  28.5  27.6  27.8 63140600     27.8
+##  3 FB     2013-01-04  28.0  28.9  27.8  28.8 72715400     28.8
+##  4 AMZN   2013-01-02 256   258   253   257    3271000    257  
+##  5 AMZN   2013-01-03 257   261   256   258    2750900    258  
+##  6 AMZN   2013-01-04 258   260   257   259    1874200    259  
+##  7 NFLX   2013-01-02  95.2  95.8  90.7  92.0 19431300     13.1
+##  8 NFLX   2013-01-03  92.0  97.9  91.5  96.6 27912500     13.8
+##  9 NFLX   2013-01-04  96.5  97.7  95.5  96.0 17761100     13.7
+## 10 GOOG   2013-01-02 719   727   717   723    5101500    361  
+## 11 GOOG   2013-01-03 725   732   721   724    4653700    361  
+## 12 GOOG   2013-01-04 729   741   728   738    5547600    369
+```
+
+### Finer periods
+Filtering can also be done by hour / minute / second. Note that the form of this is slightly different than the standard, 'YYYY-MM-DD HH:MM:SS'.
+```{r}
+# Dummy example. Every second in a day
+example <- create_series(~'2013-01-01', period = 's')
+
+# The first 2 minutes of the day
+example %>%
+  filter_time('2013-01-01' ~ '2013-01-01 00:02')
+## # A time tibble: 180 x 1
+## # Index: date
+##    date               
+##    <dttm>             
+##  1 2013-01-01 00:00:00
+##  2 2013-01-01 00:00:01
+##  3 2013-01-01 00:00:02
+##  4 2013-01-01 00:00:03
+##  5 2013-01-01 00:00:04
+##  6 2013-01-01 00:00:05
+##  7 2013-01-01 00:00:06
+##  8 2013-01-01 00:00:07
+##  9 2013-01-01 00:00:08
+## 10 2013-01-01 00:00:09
+## # ... with 170 more rows
+# 3 specific hours of the day
+# Equivalent to:
+# '2013-01-01 + 03:00:00' ~ '2013-01-01 + 06:59:59'
+example %>%
+  filter_time('2013-01-01 3' ~ '2013-01-01 6')
+## # A time tibble: 14,400 x 1
+## # Index: date
+##    date               
+##    <dttm>             
+##  1 2013-01-01 03:00:00
+##  2 2013-01-01 03:00:01
+##  3 2013-01-01 03:00:02
+##  4 2013-01-01 03:00:03
+##  5 2013-01-01 03:00:04
+##  6 2013-01-01 03:00:05
+##  7 2013-01-01 03:00:06
+##  8 2013-01-01 03:00:07
+##  9 2013-01-01 03:00:08
+## 10 2013-01-01 03:00:09
+## # ... with 14,390 more rows
+```
+For interactive use, to get an even quicker look at a dataset you can use the traditional extraction operator [ with the formula syntax.
+FB[~'2013']
+## # A time tibble: 252 x 8
+## # Index: date
+##    symbol date        open  high   low close    volume adjusted
+##    <chr>  <date>     <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>
+##  1 FB     2013-01-02  27.4  28.2  27.4  28.0  69846400     28.0
+##  2 FB     2013-01-03  27.9  28.5  27.6  27.8  63140600     27.8
+##  3 FB     2013-01-04  28.0  28.9  27.8  28.8  72715400     28.8
+##  4 FB     2013-01-07  28.7  29.8  28.6  29.4  83781800     29.4
+##  5 FB     2013-01-08  29.5  29.6  28.9  29.1  45871300     29.1
+##  6 FB     2013-01-09  29.7  30.6  29.5  30.6 104787700     30.6
+##  7 FB     2013-01-10  30.6  31.5  30.3  31.3  95316400     31.3
+##  8 FB     2013-01-11  31.3  32.0  31.1  31.7  89598000     31.7
+##  9 FB     2013-01-14  32.1  32.2  30.6  31.0  98892800     31.0
+## 10 FB     2013-01-15  30.6  31.7  29.9  30.1 173242600     30.1
+## # ... with 242 more rows
+FB['2013'~'2014-02', c(1,2,3)]
+## # A time tibble: 292 x 3
+## # Index: date
+##    symbol date        open
+##    <chr>  <date>     <dbl>
+##  1 FB     2013-01-02  27.4
+##  2 FB     2013-01-03  27.9
+##  3 FB     2013-01-04  28.0
+##  4 FB     2013-01-07  28.7
+##  5 FB     2013-01-08  29.5
+##  6 FB     2013-01-09  29.7
+##  7 FB     2013-01-10  30.6
+##  8 FB     2013-01-11  31.3
+##  9 FB     2013-01-14  32.1
+## 10 FB     2013-01-15  30.6
+## # ... with 282 more rows
+  
+### Using variables in the filter
+Each side of the time formula is unquoted and evaluated in the environment that is was created using rlang. This means that you can use variables inside the call the filter_time().
+```{r}
+date_var <- as.Date("2014-01-01")
+filter_time(FB, 'start' ~ date_var)
+## # A time tibble: 252 x 8
+## # Index: date
+##    symbol date        open  high   low close    volume adjusted
+##    <chr>  <date>     <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>
+##  1 FB     2013-01-02  27.4  28.2  27.4  28.0  69846400     28.0
+##  2 FB     2013-01-03  27.9  28.5  27.6  27.8  63140600     27.8
+##  3 FB     2013-01-04  28.0  28.9  27.8  28.8  72715400     28.8
+##  4 FB     2013-01-07  28.7  29.8  28.6  29.4  83781800     29.4
+##  5 FB     2013-01-08  29.5  29.6  28.9  29.1  45871300     29.1
+##  6 FB     2013-01-09  29.7  30.6  29.5  30.6 104787700     30.6
+##  7 FB     2013-01-10  30.6  31.5  30.3  31.3  95316400     31.3
+##  8 FB     2013-01-11  31.3  32.0  31.1  31.7  89598000     31.7
+##  9 FB     2013-01-14  32.1  32.2  30.6  31.0  98892800     31.0
+## 10 FB     2013-01-15  30.6  31.7  29.9  30.1 173242600     30.1
+## # ... with 242 more rows
+```
+
+```{r}
+date_char <- "2014-02"
+filter_time(FB, ~ date_char)
+## # A time tibble: 19 x 8
+## # Index: date
+##    symbol date        open  high   low close    volume adjusted
+##    <chr>  <date>     <dbl> <dbl> <dbl> <dbl>     <dbl>    <dbl>
+##  1 FB     2014-02-03  63.0  63.8  60.7  61.5  74866600     61.5
+##  2 FB     2014-02-04  62.0  63.1  61.8  62.8  45985500     62.8
+##  3 FB     2014-02-05  62.7  63.2  61.3  62.2  51685100     62.2
+##  4 FB     2014-02-06  61.5  62.8  61.5  62.2  42086500     62.2
+##  5 FB     2014-02-07  62.3  64.6  62.2  64.3  60704300     64.3
+##  6 FB     2014-02-10  64.3  64.5  63.5  63.5  43666100     63.5
+##  7 FB     2014-02-11  63.8  65.0  63.3  64.8  45675600     64.8
+##  8 FB     2014-02-12  64.9  65.1  64.1  64.4  47282100     64.4
+##  9 FB     2014-02-13  64.2  67.3  64.1  67.3  61911700     67.3
+## 10 FB     2014-02-14  67.5  67.6  66.7  67.1  36694900     67.1
+## 11 FB     2014-02-18  66.9  67.5  66.1  67.3  43809900     67.3
+## 12 FB     2014-02-19  67.1  69.1  67.0  68.1  62087100     68.1
+## 13 FB     2014-02-20  67.7  70.1  65.7  69.6 130928900     69.6
+## 14 FB     2014-02-21  69.7  70.0  68.4  68.6  70932400     68.6
+## 15 FB     2014-02-24  68.7  71.4  68.5  70.8  76620300     70.8
+## 16 FB     2014-02-25  70.9  71.0  69.4  69.8  52077000     69.8
+## 17 FB     2014-02-26  70.2  71.2  68.8  69.3  55322700     69.3
+## 18 FB     2014-02-27  69.3  70.0  68.9  68.9  41653700     68.9
+## 19 FB     2014-02-28  69.5  69.9  67.4  68.5  66783700     68.5
+```
