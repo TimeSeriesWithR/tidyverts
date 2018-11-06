@@ -1,0 +1,292 @@
+collapse_by 7
+collapse_by Collapse a tbl_time object by its index
+Description
+Collapse the index of a tbl_time object by time period. The index column is altered so that all
+dates that fall in a specified interval share a common date.
+Usage
+collapse_by(.tbl_time, period = "yearly", start_date = NULL, side = "end",
+clean = FALSE, ...)
+Arguments
+.tbl_time A tbl_time object.
+period A character specification used for time-based grouping. The general format to
+use is "frequency period" where frequency is a number like 1 or 2, and period
+is an interval like weekly or yearly. There must be a space between the two.
+Note that you can pass the specification in a flexible way:
+• 1 Year: '1 year' / '1 Y' / '1 yearly' / 'yearly'
+This shorthand is available for year, quarter, month, day, hour, minute, second,
+millisecond and microsecond periodicities.
+Additionally, you have the option of passing in a vector of dates to use as custom
+and more flexible boundaries.
+start_date Optional argument used to specify the start date for the first group. The default
+is to start at the closest period boundary below the minimum date in the supplied
+index.
+side Whether to return the date at the beginning or the end of the new period. By
+default, the "end" of the period. Use "start" to change to the start of the period.
+clean Whether or not to round the collapsed index up / down to the next period boundary.
+The decision to round up / down is controlled by the side argument.
+... Not currently used.
+Details
+collapse_by() is a simplification of a call to dplyr::mutate() to collapse an index column using
+collapse_index().
+Examples
+# Basic functionality -------------------------------------------------------
+# Facebook stock prices
+8 collapse_index
+data(FB)
+FB <- as_tbl_time(FB, date)
+# Collapse to weekly dates
+collapse_by(FB, "weekly")
+# A common workflow is to group on the collapsed date column
+# to perform a time based summary
+FB %>%
+collapse_by("yearly") %>%
+dplyr::group_by(date) %>%
+dplyr::summarise_if(is.numeric, mean)
+# Grouped functionality -----------------------------------------------------
+data(FANG)
+FANG <- FANG %>%
+as_tbl_time(date) %>%
+dplyr::group_by(symbol)
+# Collapse each group to monthly,
+# calculate monthly standard deviation for each column
+FANG %>%
+collapse_by("monthly") %>%
+dplyr::group_by(date, add = TRUE) %>%
+dplyr::summarise_all(sd)
+collapse_index Collapse an index vector so that all observations in an interval share
+the same date
+Description
+When collapse_index() is used, the index vector is altered so that all dates that fall in a specified
+interval share a common date. The most common use case for this is to then group on the collapsed
+index.
+Usage
+collapse_index(index, period = "yearly", start_date = NULL, side = "end",
+clean = FALSE, ...)
+Arguments
+index An index vector.
+period A character specification used for time-based grouping. The general format to
+use is "frequency period" where frequency is a number like 1 or 2, and period
+is an interval like weekly or yearly. There must be a space between the two.
+Note that you can pass the specification in a flexible way:
+collapse_index 9
+• 1 Year: '1 year' / '1 Y' / '1 yearly' / 'yearly'
+This shorthand is available for year, quarter, month, day, hour, minute, second,
+millisecond and microsecond periodicities.
+Additionally, you have the option of passing in a vector of dates to use as custom
+and more flexible boundaries.
+start_date Optional argument used to specify the start date for the first group. The default
+is to start at the closest period boundary below the minimum date in the supplied
+index.
+side Whether to return the date at the beginning or the end of the new period. By
+default, the "end" of the period. Use "start" to change to the start of the period.
+clean Whether or not to round the collapsed index up / down to the next period boundary.
+The decision to round up / down is controlled by the side argument.
+... Not currently used.
+Details
+The collapse_by() function provides a shortcut for the most common use of collapse_index(),
+calling the function inside a call to mutate() to modify the index directly. For more flexibility, like
+the nesting example below, use collapse_index().
+Because this is often used for end of period summaries, the default is to use side = "end". Note
+that this is the opposite of as_period() where the default is side = "start".
+The clean argument is especially useful if you have an irregular series and want cleaner dates to
+report for summary values.
+Examples
+# Basic functionality -------------------------------------------------------
+# Facebook stock prices
+data(FB)
+FB <- as_tbl_time(FB, date)
+# Collapse to weekly dates
+dplyr::mutate(FB, date = collapse_index(date, "weekly"))
+# A common workflow is to group on the new date column
+# to perform a time based summary
+FB %>%
+dplyr::mutate(date = collapse_index(date, "yearly")) %>%
+dplyr::group_by(date) %>%
+dplyr::summarise_if(is.numeric, mean)
+# You can also assign the result to a separate column and use that
+# to nest on, allowing for 'period nests' that keep the
+# original dates in the nested tibbles.
+FB %>%
+dplyr::mutate(nest_date = collapse_index(date, "2 year")) %>%
+dplyr::group_by(nest_date) %>%
+10 create_series
+tidyr::nest()
+# Grouped functionality -----------------------------------------------------
+data(FANG)
+FANG <- FANG %>%
+as_tbl_time(date) %>%
+dplyr::group_by(symbol)
+# Collapse each group to monthly,
+# calculate monthly standard deviation for each column
+FANG %>%
+dplyr::mutate(date = collapse_index(date, "monthly")) %>%
+dplyr::group_by(date, add = TRUE) %>%
+dplyr::summarise_all(sd)
+create_series Create a tbl_time object with a sequence of regularly spaced dates
+Description
+create_series() allows the user to quickly create a tbl_time object with a date column populated
+with a sequence of dates.
+Usage
+create_series(time_formula, period = "daily", class = "POSIXct",
+include_end = FALSE, tz = "UTC", as_vector = FALSE)
+Arguments
+time_formula A period to create the series over. This is specified as a formula. See the Details
+section of filter_time() for more information.
+period A character specification used for time-based grouping. The general format to
+use is "frequency period" where frequency is a number like 1 or 2, and period
+is an interval like weekly or yearly. There must be a space between the two.
+Note that you can pass the specification in a flexible way:
+• 1 Year: '1 year' / '1 Y' / '1 yearly' / 'yearly'
+This shorthand is available for year, quarter, month, day, hour, minute, second,
+millisecond and microsecond periodicities.
+Additionally, you have the option of passing in a vector of dates to use as custom
+and more flexible boundaries.
+class One of "Date", "POSIXct", "hms", "yearmon", "yearqtr". The default is
+"POSIXct".
+FANG 11
+include_end Whether to always include the RHS of the time_formula even if it does not
+match the regularly spaced index.
+tz Time zone of the new series.
+as_vector Should the series be returned as a vector instead of a tibble?
+Examples
+# Every day in 2013
+create_series(~'2013', 'daily')
+# Every other day in 2013
+create_series(~'2013', '2 d')
+# Every quarter in 2013
+create_series(~'2013', '1 q')
+# Daily series for 2013-2015
+create_series('2013' ~ '2015', '1 d')
+# Minute series for 2 months
+create_series('2012-01' ~ '2012-02', 'M')
+# Second series for 2 minutes
+create_series('2011-01-01 12:10:00' ~ '2011-01-01 12:12:00', 's')
+# Date class
+create_series(~'2013', 'day', class = "Date")
+# yearmon class
+create_series(~'2013', 'month', class = "yearmon")
+# hms class. time_formula specified as HH:MM:SS here
+create_series('00:00:00' ~ '12:00:00', 'second' , class = "hms")
+# Subsecond series
+create_series('2013' ~ '2013-01-01 00:00:01', period = "10 millisec")
+milli <- create_series('2013' ~ '2013-01-01 00:00:01', period = ".1 sec")
+# Check that 'milli' is correct by running:
+# options("digits.secs" = 4)
+# options("digits" = 18)
+# milli$date
+# as.numeric(milli$date)
+FANG Stock prices for Facebook, Amazon, Netflix and Google from 2013-
+2016
+12 FB
+Description
+A dataset containing the date, open, high, low, close, volume, and adjusted stock prices for Facebook,
+Amazon, Netflix and Google from 2013-2016.
+Usage
+FANG
+Format
+A tibble with 4,032 rows and 8 variables:
+symbol stock ticker symbol
+date trade date
+open stock price at the open of trading, in USD
+high stock price at the highest point during trading, in USD
+low stock price at the lowest point during trading, in USD
+close stock price at the close of trading, in USD
+volume number of shares traded
+adjusted stock price at the close of trading adjusted for stock splits, in USD
+Source
+http://www.investopedia.com/terms/f/fang-stocks-fb-amzn.asp
+FB Stock prices for Facebook from 2013-2016
+Description
+A dataset containing the date, open, high, low, close, volume, and adjusted stock prices for Facebook
+from 2013-2016.
+Usage
+FB
+Format
+A tibble with 1,008 rows and 8 variables:
+symbol stock ticker symbol
+date trade date
+open stock price at the open of trading, in USD
+high stock price at the highest point during trading, in USD
+filter_time 13
+low stock price at the lowest point during trading, in USD
+close stock price at the close of trading, in USD
+volume number of shares traded
+adjusted stock price at the close of trading adjusted for stock splits, in USD
+Source
+http://www.investopedia.com/terms/f/fang-stocks-fb-amzn.asp
+filter_time Succinctly filter a tbl_time object by its index
+Description
+Use a concise filtering method to filter a tbl_time object by its index.
+Usage
+filter_time(.tbl_time, time_formula)
+## S3 method for class 'tbl_time'
+x[i, j, drop = FALSE]
+Arguments
+.tbl_time A tbl_time object.
+time_formula A period to filter over. This is specified as a formula. See Details.
+x Same as .tbl_time but consistent naming with base R.
+i A period to filter over. This is specified the same as time_formula or can use
+the traditional row extraction method.
+j Optional argument to also specify column index to subset. Works exactly like
+the normal extraction operator.
+drop Will always be coerced to FALSE by tibble.
+Details
+The time_formula is specified using the format from ~ to. Each side of the time_formula is
+specified as the character 'YYYY-MM-DD HH:MM:SS', but powerful shorthand is available. Some
+examples are:
+• Year: '2013' ~ '2015'
+• Month: '2013-01' ~ '2016-06'
+• Day: '2013-01-05' ~ '2016-06-04'
+• Second: '2013-01-05 10:22:15' ~ '2018-06-03 12:14:22'
+14 filter_time
+• Variations: '2013' ~ '2016-06'
+The time_formula can also use a one sided formula.
+• Only dates in 2015: ~'2015'
+• Only dates March 2015: ~'2015-03'
+The time_formula can also use 'start' and 'end' as keywords for your filter.
+• Start of the series to end of 2015: 'start' ~ '2015'
+• Start of 2014 to end of series: '2014' ~ 'end'
+All shorthand dates are expanded:
+• The from side is expanded to be the first date in that period
+• The to side is expanded to be the last date in that period
+This means that the following examples are equivalent (assuming your index is a POSIXct):
+• '2015' ~ '2016' == '2015-01-01 + 00:00:00' ~ '2016-12-31 + 23:59:59'
+• ~'2015' == '2015-01-01 + 00:00:00' ~ '2015-12-31 + 23:59:59'
+• '2015-01-04 + 10:12' ~ '2015-01-05' == '2015-01-04 + 10:12:00' ~ '2015-01-05 + 23:59:59'
+Special parsing is done for indices of class hms. The from ~ to time formula is specified as only
+HH:MM:SS.
+• Start to 5th second of the 12th hour: 'start' ~ '12:00:05'
+• Every second in the 12th hour: ~'12'
+Subsecond resolution is also supported, however, R has a unique way of handling and printing subsecond
+dates and the user should be comfortable with this already. Specify subsecond resolution
+like so: '2013-01-01 00:00:00.1' ~ '2013-01-01 00:00:00.2'. Note that one sided expansion
+does not work with subsecond resolution due to seconds and subseconds being grouped
+together into 1 number (i.e. 1.2 seconds). This means ~'2013-01-01 00:00:00' does not expand
+to something like '2013-01-01 00:00:00.00' ~ '2013-01-01 00:00:00.99', but only expands
+to include whole seconds.
+This function respects dplyr::group_by() groups.
+Examples
+# FANG contains Facebook, Amazon, Netflix and Google stock prices
+data(FANG)
+FANG <- as_tbl_time(FANG, date) %>%
+dplyr::group_by(symbol)
+# 2013-01-01 to 2014-12-31
+filter_time(FANG, '2013' ~ '2014')
+# 2013-05-25 to 2014-06-04
+filter_time(FANG, '2013-05-25' ~ '2014-06-04')
+floor_index 15
+# Using the `[` subset operator
+FANG['2014'~'2015']
+# Using `[` and one sided formula for only dates in 2014
+FANG[~'2014']
+# Using `[` and column selection
+FANG['2013'~'2016', c("date", "adjusted")]
+# Variables are unquoted using rlang
+lhs_date <- "2013"
+rhs_date <- as.Date("2014-01-01")
+filter_time(FANG, lhs_date ~ rhs_date)
+# Use the keywords 'start' and 'end' to conveniently access ends
+filter_time(FANG, 'start' ~ '2014')
+# hms (hour, minute, second) classes have special parsing
+hms_example <- create_series(~'12:01', 'second', class = 'hms')
+filter_time(hms_example, 'start' ~ '12:01:30')
