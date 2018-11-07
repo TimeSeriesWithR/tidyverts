@@ -1,0 +1,11 @@
+reconstruct 19
+reconstruct Reconstruct an S3 class from a template
+Description
+This is an implementation of sloop::reconstruct() that users can ignore. Once sloop is on
+CRAN, this function will be removed and that version will be used. It currently must be exported
+for use in tidyquant.
+Usage
+reconstruct(new, old)
+Arguments
+new Freshly created object
+old Existing object to use as template
