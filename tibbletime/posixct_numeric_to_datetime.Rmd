@@ -1,0 +1,12 @@
+posixct_numeric_to_datetime
+Converting a posixct numeric time back to a classed datetime
+Description
+Converting a posixct numeric time back to a classed datetime
+Usage
+posixct_numeric_to_datetime(x, class = "POSIXct", ..., tz = NULL)
+Arguments
+* x A posixct numeric vector
+* class The class to convert to
+* ... Extra arguments passed on the the specific coercion function
+* tz The time zone to convert to. The default UTC is used if none is supplied
+
