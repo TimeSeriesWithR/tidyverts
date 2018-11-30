@@ -1,0 +1,16 @@
+getters Getters
+
+#### Description
+Accessors to attributes of tbl_time objects.
+
+##### Usage
+<pre><code>
+get_index_quo(.tbl_time)
+get_index_char(.tbl_time)
+get_index_col(.tbl_time)
+get_index_time_zone(.tbl_time)
+get_index_class(.tbl_time)
+</code></pre>
+
+#### Arguments
+.tbl_time A tbl_time object.
