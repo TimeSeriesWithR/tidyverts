@@ -1,10 +1,14 @@
 posixct_numeric_to_datetime
 Converting a posixct numeric time back to a classed datetime
-Description
+
+#### Description
 Converting a posixct numeric time back to a classed datetime
-Usage
+
+#### Usage
+<pre><code>
 posixct_numeric_to_datetime(x, class = "POSIXct", ..., tz = NULL)
-Arguments
+</code></pre>
+#### Arguments
 * x A posixct numeric vector
 * class The class to convert to
 * ... Extra arguments passed on the the specific coercion function
