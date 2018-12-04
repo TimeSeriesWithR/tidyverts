@@ -1,0 +1,22 @@
+## pull_interval Extract time interval from a vector
+
+#### Description 
+Assuming regularly spaced time, the pull_interval() returns a list of time components as the "interval" class.
+
+#### Usage
+<pre><code>
+pull_interval(x)
+</code></pre>
+
+#### Arguments 
+x AvectorofPOSIXt, Date, yearmonth, yearquarter, difftime, hms, integer, numeric.
+
+#### Details 
+``index_valid()`` and ``pull_interval()`` make a tsibble extensible to support custom time index.
+
+Value an "interval" class (a list) includes "year", "quarter", "month", "week", "day", "hour", "minute", "second", "millisecond", "microsecond", "nanosecond", "unit".
+
+#### Examples
+```{r}
+x <- seq(as.Date("2017-10-01"), as.Date("2017-10-31"), by = 3) pull_interval(x)
+```
