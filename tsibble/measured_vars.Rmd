@@ -1,0 +1,16 @@
+
+## measured_vars Return measured variables
+Description Return measured variables
+
+#### Usage
+<pre><code>
+measured_vars(x)
+</code></pre>
+Arguments x A tbl_ts.
+
+#### Examples
+```{r}
+measured_vars(pedestrian) 
+measured_vars(tourism)
+```
+
