@@ -3,36 +3,34 @@ as_period Change tbl_time periodicity
 Convert a tbl_time object from daily to monthly, from minute data to hourly, and more. This
 allows the user to easily aggregate data to a less granular level by taking the value from either the
 beginning or end of the period.
-Usage
-as_period(.tbl_time, period = "yearly", start_date = NULL, side = "start",
-include_endpoints = FALSE, ...)
-### Arguments
-.tbl_time A tbl_time object.
-period A character specification used for time-based grouping. The general format to
-use is "frequency period" where frequency is a number like 1 or 2, and period
-is an interval like weekly or yearly. There must be a space between the two.
-Note that you can pass the specification in a flexible way:
+
+#### Usage
+
+<pre><code>
+as_period(.tbl_time, period = "yearly", start_date = NULL, side = "start", include_endpoints = FALSE, ...)
+</code></pre>
+
+#### Arguments
+* ``.tbl_time``: A tbl_time object. period A character specification used for time-based grouping. The general format to
+use is "frequency period" where frequency is a number like 1 or 2, and period is an interval like weekly or yearly. There must be a space between the two. Note that you can pass the specification in a flexible way:
 • 1 Year: '1 year' / '1 Y' / '1 yearly' / 'yearly'
-This shorthand is available for year, quarter, month, day, hour, minute, second,
-millisecond and microsecond periodicities.
-Additionally, you have the option of passing in a vector of dates to use as custom
-and more flexible boundaries.
-as_period 3
-start_date Optional argument used to specify the start date for the first group. The default
-is to start at the closest period boundary below the minimum date in the supplied
-index.
-side Whether to return the date at the beginning or the end of the new period. By
-default, the "start" of the period. Use "end" to change to the end of the period.
-include_endpoints
-Whether to include the first or last data point in addition to the transformed data.
-... Not currently used.
-### Details
-This function respects dplyr::group_by() groups.
-The side argument is useful when you want to return data at, say, the end of a quarter, or the end
+This shorthand is available for year, quarter, month, day, hour, minute, second, millisecond and microsecond periodicities.
+Additionally, you have the option of passing in a vector of dates to use as custom and more flexible boundaries.
+* ``start_date``: Optional argument used to specify the start date for the first group. The default is to start at the closest period boundary below the minimum date in the supplied index.
+* ``side``: Whether to return the date at the beginning or the end of the new period. By default, the "start" of the period. Use "end" to change to the end of the period.
+* ``include_endpoints``: Whether to include the first or last data point in addition to the transformed data.
+* ``...``: Not currently used.
+
+#### Details
+
+* This function respects dplyr::group_by() groups.
+* The side argument is useful when you want to return data at, say, the end of a quarter, or the end
 of a month.
-include_endpoints can be useful when calculating a change over time. In addition to changing to
+* ``include_endpoints`` can be useful when calculating a change over time. In addition to changing to
 monthly dates, you often need the first data point as a baseline for the first calculation.
+
 #### Examples
+```{r}
 # Basic usage ---------------------------------------------------------------
 # FB stock prices
 data(FB)
@@ -44,6 +42,9 @@ as_period(FB, "2 years")
 # Aggregate FB to yearly data, but use the last data point available
 # in that period
 as_period(FB, "yearly", side = "end")
+```
+
+```{r}
 # Aggregate FB to yearly data, end of period, and include the first
 # endpoint
 as_period(FB, "yearly", side = "end", include_endpoints = TRUE)
@@ -53,9 +54,10 @@ as_period(FB, "yearly", side = "end", include_endpoints = TRUE)
 as_period(FB, "weekly")
 # Aggregate to every other week
 as_period(FB, "2 weeks")
+```
+```{r}
 # FB is daily data, aggregate to minute?
 # Not allowed for Date class indices, an error is thrown
-4 as_period
 # as_period(FB, "minute")
 # Grouped usage -------------------------------------------------------------
 # FANG contains Facebook, Amazon, Netflix and Google stock prices
@@ -67,6 +69,9 @@ as_period(FANG, "yearly")
 # Every 6 months, respecting groups
 as_period(FANG, "6 months")
 # Using start_date ----------------------------------------------------------
+```
+
+```{r}
 #### One method using start_date
 # FB stock prices
 data(FB)
@@ -78,7 +83,9 @@ as_period(FB, "2 day")
 # Specifying the `start_date = "2013-01-01"` might be preferable.
 # Groups become (2013-01-01, 2013-01-02), (2013-01-03, 2013-01-04) and so on.
 as_period(FB, "2 day", start_date = "2013-01-01")
+```
 
+```{r}
 #### Equivalent method using an index vector
 # FB stock prices
 data(FB)
@@ -91,13 +98,16 @@ as_vector = TRUE)
 FB %>%
 as_tbl_time(date) %>%
 as_period(period = custom_period)
+```
+
+```{r}
 # Manually calculating returns at different periods -------------------------
 data(FB)
-as_tbl_time 5
 # Annual Returns
 # Convert to end of year periodicity, but include the endpoints to use as
 # a reference for the first return calculation. Then calculate returns.
 FB %>%
-as_tbl_time(date) %>%
-as_period("1 y", side = "end", include_endpoints = TRUE) %>%
-dplyr::mutate(yearly_return = adjusted / dplyr::lag(adjusted) - 1)
+  as_tbl_time(date) %>%
+  as_period("1 y", side = "end", include_endpoints = TRUE) %>%
+  dplyr::mutate(yearly_return = adjusted / dplyr::lag(adjusted) - 1)
+```
