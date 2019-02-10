@@ -1,0 +1,23 @@
+
+floor_index A simple wrapper of lubridate::floor_date()
+Description
+This is a thin wrapper around a lubridate::floor_date() that works for hms, yearmon, and
+yearqtr classes as well.
+Usage
+floor_index(x, unit = "seconds")
+Arguments
+x a vector of date-time objects
+unit a character string specifying a time unit or a multiple of a unit to be rounded
+to. Valid base units are second, minute, hour, day, week, month, bimonth,
+quarter, season, halfyear and year. Arbitrary unique English abbreviations
+as in the period() constructor are allowed. Rounding to multiple of units (except
+weeks) is supported.
+See Also
+lubridate::floor_date()
+16 parse_period
+Examples
+data(FB)
+dplyr::mutate(FB, date2 = floor_index(date, "year"))
+time_test <- create_series('00:00:00'~'12:00:00',
+'1 minute', class = "hms")
+dplyr::mutate(time_test, date2 = floor_index(date, "hour"))
