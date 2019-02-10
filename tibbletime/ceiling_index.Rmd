@@ -1,8 +1,16 @@
+---
+title: "``tibbletime::ceiling_index ``"
+output: html_document
+---
 
-ceiling_index A simple wrapper of lubridate::ceiling_date()
+```{r setup, include=FALSE}
+library(tibbletime)
+```
+
+A simple wrapper of ``lubridate::ceiling_date()``
 
 #### Description
-This is a thin wrapper around a lubridate::ceiling_date() that works for hms, yearmon, and yearqtr classes as well.
+This is a thin wrapper around a ``lubridate::ceiling_date()`` that works for hms, yearmon, and yearqtr classes as well.
 
 #### Usage
 <pre><code>
@@ -10,14 +18,17 @@ ceiling_index(x, unit = "seconds")
 </code></pre>
 
 ### Arguments
-* x a vector of date-time objects
-* unit a character string specifying a time unit or a multiple of a unit to be rounded to. Valid base units are second, minute, hour, day, week, month, bimonth, quarter, season, halfyear and year. Arbitrary unique English abbreviations as in the period() constructor are allowed. Rounding to multiple of units (except weeks) is supported.
-See Also
+* ``x``: a vector of date-time objects
+* ``unit``: a character string specifying a time unit or a multiple of a unit to be rounded to. Valid base units are second, minute, hour, day, week, month, bimonth, quarter, season, halfyear and year. Arbitrary unique English abbreviations as in the period() constructor are allowed. Rounding to multiple of units (except weeks) is supported.
+
+#### See Also
 lubridate::ceiling_date()
 
 #### Examples
+```{r}
 data(FB)
 dplyr::mutate(FB, date2 = ceiling_index(date, "year"))
 time_test <- create_series('00:00:00'~'12:00:00',
 '1 minute', class = "hms")
 dplyr::mutate(time_test, date2 = ceiling_index(date, "hour"))
+```
