@@ -1,3 +1,12 @@
+---
+title: "``tibbletime::getters``"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tibbletime)
+```
+
 getters Getters
 
 #### Description
@@ -13,4 +22,4 @@ get_index_class(.tbl_time)
 </code></pre>
 
 #### Arguments
-.tbl_time A tbl_time object.
+* ``.tbl_time``: A tbl_time object.
