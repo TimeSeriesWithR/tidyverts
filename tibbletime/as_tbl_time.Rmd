@@ -1,3 +1,12 @@
+---
+title: "``tibbletime::as_tbl_time``"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tibbletime)
+```
+
 
 as_tbl_time Create tbl_time objects
 
@@ -18,11 +27,9 @@ tbl_time(x, index = NULL)
 
 ### Details
 The information stored about tbl_time objects are the index_quo and the index_time_zone.
-These are stored as attributes, with the index_quo as a rlang::quosure() and the time_zone as
-a string.
-Currently, Date and POSIXct classes are fully supported. yearmon, yearqtr, and hms have experimental
-support. Due to dplyr’s handling of S3 classes like these 3, the classes are lost when you
-manipulate the index columns directly.
+These are stored as attributes, with the index_quo as a rlang::quosure() and the time_zone as a string.
+Currently, Date and POSIXct classes are fully supported. yearmon, yearqtr, and hms have experimental support. Due to dplyr’s handling of S3 classes like these 3, the classes are lost when you manipulate the index columns directly.
+
 #### Examples
 ```{r}
 # Converting a data.frame to a `tbl_time`
@@ -42,4 +49,4 @@ time = as.POSIXct(c("2017-01-01 10:12:01", "2017-01-02 12:12:01")),
 value = c(1, 2)
 )
 as_tbl_time(ex2, time)
-```{r}
+```
