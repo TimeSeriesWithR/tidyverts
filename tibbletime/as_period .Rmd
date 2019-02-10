@@ -1,8 +1,16 @@
-as_period Change tbl_time periodicity
+
+---
+title: "``tibbletime::as_period``"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tibbletime)
+```
+Change tbl_time periodicity
+
 ### Description
-Convert a tbl_time object from daily to monthly, from minute data to hourly, and more. This
-allows the user to easily aggregate data to a less granular level by taking the value from either the
-beginning or end of the period.
+Convert a tbl_time object from daily to monthly, from minute data to hourly, and more. This allows the user to easily aggregate data to a less granular level by taking the value from either the beginning or end of the period.
 
 #### Usage
 
@@ -31,7 +39,8 @@ monthly dates, you often need the first data point as a baseline for the first c
 
 #### Examples
 ```{r}
-# Basic usage ---------------------------------------------------------------
+# Basic usage 
+---------------------------------------------------------------
 # FB stock prices
 data(FB)
 FB <- as_tbl_time(FB, date)
