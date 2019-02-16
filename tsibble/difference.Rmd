@@ -1,7 +1,5 @@
 ---
-title: "Tsibble"
-author: "Kevin O'Brien"
-date: "24 September 2018"
+title: "tsibble::difference"
 output: html_document
 ---
 
@@ -22,7 +20,9 @@ difference(x, lag = 1, differences = 1, default = NA, order_by = NULL)
 </code></pre>
 #### Arguments 
 
-x A numeric vector. lag An positive integer indicating which lag to use. differences An positive integer indicating the order of the difference. default Value used for non-existent rows, defaults to NA. order_by Override the default ordering to use another vector.
+* x A numeric vector. 
+* lag An positive integer indicating which lag to use. 
+* differences An positive integer indicating the order of the difference. default Value used for non-existent rows, defaults to NA. * order_by Override the default ordering to use another vector.
 
 #### Value 
 A numeric vector of the same length as x.
