@@ -1,9 +1,12 @@
 
-getFormats Functions to retrieve (or set) formats used for parsing dates.
+getFormats
+
+Functions to retrieve (or set) formats used for parsing dates.
+
 #### Description
 The time and date parsing and conversion relies on trying a (given and fixed) number of timeformats.
-The format used is the one employed by the underlying implementation of the Boost date_time
-library.
+The format used is the one employed by the underlying implementation of the Boost date_time library.
+
 #### Usage
 <pre><code>
 getFormats()
@@ -11,15 +14,20 @@ addFormats(fmt)
 </code></pre>
 
 #### Arguments
-fmt A vector of character values in the form understood by Boost date_time
-Value
-Nothing in the case of addFormats; a character vector of formats in the case of getFormats
-#### Authors(s)
-Dirk Eddelbuettel
-See Also
-anytime-package and #### References therein
+* fmt A vector of character values in the form understood by Boost date_time
+
 #### Examples
 getFormats()
 addFormats(c("%d %b %y", # two-digit date [not recommended], textual month
 "%a %b %d %Y")) # weekday weeknumber four-digit year
 8 iso8601
+
+#### Value
+Nothing in the case of addFormats; a character vector of formats in the case of getFormats
+
+
+#### Authors(s)
+Dirk Eddelbuettel
+See Also
+anytime-package and #### References therein
+
