@@ -1,7 +1,5 @@
 ---
-title: "Tsibble"
-author: "Kevin O'Brien"
-date: "24 September 2018"
+title: "tsibble::units_since`"
 output: html_document
 ---
 
@@ -16,9 +14,16 @@ library(tsibble)
 Time units since Unix Epoch
 
 #### Usage
+<pre><code>
 units_since(x)
-Arguments x An object of POSIXct, Date, yearweek, yearmonth, yearquarter.
-Details origin: • POSIXct: 1970-01-01 00:00:00 • Date: 1970-01-01 • yearweek: 1970 W01 (i.e. 1969-12-29) • yearmonth: 1970 Jan • yearquarter: 1970 Qtr1
+</code></pre<
+
+#### Arguments 
+* x An object of POSIXct, Date, yearweek, yearmonth, yearquarter.
+
+#### Details 
+origin: • POSIXct: 1970-01-01 00:00:00 • Date: 1970-01-01 • 
+yearweek: 1970 W01 (i.e. 1969-12-29) • yearmonth: 1970 Jan • yearquarter: 1970 Qtr1
 
 #### Examples
 ```{r}
